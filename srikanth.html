@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrimeX Streaming</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
+
+body{
+  background:#0a0f14;
+  color:white;
+  overflow-x:hidden;
+}
+
+/* NAVBAR */
+.navbar{
+  position:fixed;
+  width:100%;
+  padding:18px 60px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  backdrop-filter:blur(10px);
+  background:rgba(15,23,30,0.6);
+  z-index:1000;
+}
+
+.logo{
+  font-size:28px;
+  font-weight:800;
+  color:#00a8e1;
+}
+
+.profile{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:url('https://randomuser.me/api/portraits/men/32.jpg') center/cover;
+  cursor:pointer;
+}
+
+/* HERO */
+.hero{
+  height:100vh;
+  position:relative;
+  display:flex;
+  align-items:center;
+  padding:0 80px;
+  transition:background-image 0.8s ease-in-out;
+  background-size:cover;
+  background-position:center;
+}
+
+.hero::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to right, rgba(0,0,0,0.85), transparent);
+}
+
+.hero-content{
+  position:relative;
+  z-index:2;
+  max-width:600px;
+}
+
+.hero h1{
+  font-size:65px;
+  margin-bottom:20px;
+}
+
+.hero p{
+  color:#ddd;
+  margin-bottom:25px;
+  line-height:1.6;
+}
+
+.buttons button{
+  padding:14px 30px;
+  border-radius:30px;
+  border:none;
+  margin-right:15px;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.play{
+  background:linear-gradient(45deg,#00a8e1,#0077ff);
+  color:white;
+}
+
+.list{
+  background:rgba(255,255,255,0.2);
+  color:white;
+}
+
+.buttons button:hover{
+  transform:scale(1.05);
+}
+
+/* HERO CONTROLS */
+.controls{
+  position:absolute;
+  bottom:40px;
+  right:60px;
+  z-index:2;
+}
+
+.controls button{
+  padding:8px 14px;
+  margin-left:10px;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+  background:#00a8e1;
+  color:white;
+}
+
+/* SECTION */
+.section{
+  padding:70px 60px;
+}
+
+.section h2{
+  margin-bottom:25px;
+}
+
+.row{
+  display:flex;
+  gap:25px;
+  overflow-x:auto;
+}
+
+.row::-webkit-scrollbar{display:none;}
+
+.card{
+  position:relative;
+  min-width:220px;
+  height:320px;
+  border-radius:12px;
+  overflow:hidden;
+  cursor:pointer;
+  transition:0.4s;
+  opacity:0;
+  transform:translateY(40px);
+}
+
+.card.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+.card img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  transition:0.4s;
+}
+
+.card:hover img{
+  transform:scale(1.15);
+}
+
+.card span{
+  position:absolute;
+  bottom:15px;
+  left:15px;
+  font-weight:600;
+}
+
+/* MODAL VIDEO */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.85);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  visibility:hidden;
+  opacity:0;
+  transition:0.3s;
+}
+
+.modal.active{
+  visibility:visible;
+  opacity:1;
+}
+
+.modal video{
+  width:70%;
+  border-radius:10px;
+}
+
+.close{
+  position:absolute;
+  top:40px;
+  right:60px;
+  font-size:30px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+  <div class="logo">MY</div>
+  <div class="profile"></div>
+</div>
+
+<div class="hero" id="hero">
+  <div class="hero-content">
+    <h1 id="hero-title">HI DEVI</h1>
+    <p id="hero-desc">A fearless group of vigilantes take on corrupt superheroes.</p>
+    <div class="buttons">
+      <button class="play" onclick="openModal()">▶ Play</button>
+      <button class="list" onclick="addToList(this)">+ My List</button>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button onclick="prevSlide()">◀</button>
+    <button onclick="nextSlide()">▶</button>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Trending Now</h2>
+  <div class="row">
+    <div class="card"><img src="https://images.unsplash.com/photo-1524985069026-dd778a71c7b4"><span>The Boys</span></div>
+    <div class="card"><img src="https://images.unsplash.com/photo-1517602302552-471fe67acf66"><span>Jack Ryan</span></div>
+    <div class="card"><img src="https://images.unsplash.com/photo-1497032205916-ac775f0649ae"><span>Tomorrow War</span></div>
+    <div class="card"><img src="https://wallpapercave.com/wp/wp13303970.jpg"><span>Reacher</span></div>
+  </div>
+</div>
+
+<!-- VIDEO MODAL -->
+<div class="modal" id="modal">
+  <div class="close" onclick="closeModal()">✖</div>
+  <video controls>
+    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+  </video>
+</div>
+
+<script>
+const slides = [
+  {
+    image:"https://wallpaperaccess.com/full/8674457.jpg",
+    title:"POWERSTAR",
+    desc:"A fearless group of vigilantes take on corrupt superheroes."
+  },
+  {
+    image:"https://wallpapercave.com/wp/wp13303970.jpg",
+    title:"HI NANNA",
+    desc:"CIA analyst is thrust into a dangerous field assignment."
+  },
+  {
+    image:"https://thumbs.dreamstime.com/b/pink-flowers-roses-background-50386118.jpg",
+    title:"FOR YOU",
+    desc:"Soldiers travel to the future to save humanity."
+  }
+];
+
+let index = 0;
+const hero = document.getElementById("hero");
+const title = document.getElementById("hero-title");
+const desc = document.getElementById("hero-desc");
+
+function updateSlide(){
+  hero.style.backgroundImage = `url(${slides[index].image})`;
+  title.textContent = slides[index].title;
+  desc.textContent = slides[index].desc;
+}
+
+function nextSlide(){
+  index = (index + 1) % slides.length;
+  updateSlide();
+}
+
+function prevSlide(){
+  index = (index - 1 + slides.length) % slides.length;
+  updateSlide();
+}
+
+setInterval(nextSlide, 5000);
+updateSlide();
+
+/* Modal */
+function openModal(){
+  document.getElementById("modal").classList.add("active");
+}
+
+function closeModal(){
+  document.getElementById("modal").classList.remove("active");
+}
+
+/* My List */
+function addToList(btn){
+  btn.textContent = "✔ Added";
+  btn.style.background = "#00c853";
+}
+
+/* Scroll Animation */
+const cards = document.querySelectorAll(".card");
+window.addEventListener("scroll", ()=>{
+  cards.forEach(card=>{
+    const position = card.getBoundingClientRect().top;
+    if(position < window.innerHeight - 100){
+      card.classList.add("show");
+    }
+  });
+});
+</script>
+
+</body>
+</html>
